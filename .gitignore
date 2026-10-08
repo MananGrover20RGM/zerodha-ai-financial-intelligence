@@ -1,0 +1,5 @@
+.env
+__pycache__/
+zerodha_audit.db
+*.zip
+cloudflared-linux-amd64

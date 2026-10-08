@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Zerodha AI Intelligence Platform</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    body { font-family: 'Inter', sans-serif; }
+    .nav-btn.active { background-color: #ecfdf5; color: #065f46; font-weight: 600; }
+  </style>
+</head>
+<body class="flex h-screen bg-[#f8faf9] text-slate-800 overflow-hidden">
+
+  <!-- Sidebar -->
+  <aside class="w-64 bg-white border-r border-slate-200 flex flex-col justify-between p-4 flex-shrink-0 select-none">
+    <div>
+      <div class="flex items-center space-x-3 mb-6 px-2">
+        <div class="w-8 h-8 bg-[#065f46] rounded-md flex items-center justify-center text-white font-bold text-lg shadow-sm">Z</div>
+        <div>
+          <span class="font-bold text-slate-900 text-base">Zerodha</span>
+          <span class="font-bold text-[#065f46] text-base">AI</span>
+          <div class="text-[10px] text-slate-400 font-medium -mt-1 tracking-tight">Intelligence Platform</div>
+        </div>
+      </div>
+
+      <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-3 mb-2">Workspace</div>
+      <nav class="space-y-0.5 text-xs font-medium">
+        <button onclick="switchView('overview')" id="btn-overview" class="nav-btn active w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-slate-600 hover:bg-slate-50">
+          <i class="fa-solid fa-shapes w-4"></i> <span>Overview</span>
+        </button>
+        <button onclick="switchView('portfolio')" id="btn-portfolio" class="nav-btn w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-slate-600 hover:bg-slate-50">
+          <i class="fa-solid fa-wallet w-4"></i> <span>Portfolio</span>
+        </button>
+        <button onclick="switchView('risk')" id="btn-risk" class="nav-btn w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-slate-600 hover:bg-slate-50">
+          <i class="fa-solid fa-shield-halved w-4"></i> <span>Risk Engine</span>
+        </button>
+        <button onclick="switchView('markets')" id="btn-markets" class="nav-btn w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-slate-600 hover:bg-slate-50">
+          <i class="fa-solid fa-chart-line w-4"></i> <span>Markets</span>
+        </button>
+        <button onclick="switchView('news')" id="btn-news" class="nav-btn w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-slate-600 hover:bg-slate-50">
+          <i class="fa-regular fa-newspaper w-4"></i> <span>News</span>
+        </button>
+        <button onclick="switchView('watchlist')" id="btn-watchlist" class="nav-btn w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-slate-600 hover:bg-slate-50">
+          <i class="fa-regular fa-eye w-4"></i> <span>Watchlist</span>
+        </button>
+        <button onclick="switchView('calculators')" id="btn-calculators" class="nav-btn w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-slate-600 hover:bg-slate-50">
+          <i class="fa-solid fa-calculator w-4"></i> <span>Calculators</span>
+        </button>
+        <button onclick="switchView('analyst')" id="btn-analyst" class="nav-btn w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-slate-600 hover:bg-slate-50">
+          <i class="fa-solid fa-brain w-4 text-[#065f46]"></i> <span>AI Analyst</span>
+          <span class="ml-auto text-[9px] bg-emerald-100 text-emerald-800 px-1.5 py-0.5 rounded font-bold">AI</span>
+        </button>
+        <button onclick="switchView('activity')" id="btn-activity" class="nav-btn w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-slate-600 hover:bg-slate-50">
+          <i class="fa-solid fa-chart-simple w-4"></i> <span>Activity & Logs</span>
+        </button>
+      </nav>
+    </div>
+
+    <!-- Analyst Shortcut Widget -->
+    <div onclick="switchView('analyst')" class="bg-[#f0fdf4] border border-emerald-200 rounded-xl p-3 flex items-center space-x-3 cursor-pointer hover:border-emerald-400">
+      <div class="w-8 h-8 rounded-full bg-emerald-200 flex items-center justify-center text-emerald-900">
+        <i class="fa-regular fa-lightbulb text-sm"></i>
+      </div>
+      <div>
+        <div class="text-xs font-semibold text-slate-800">Your Analyst</div>
+        <div class="text-[11px] text-slate-500">Ask about your portfolio</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main View Container -->
+  <main class="flex-1 flex flex-col overflow-hidden">
+    <!-- Header -->
+    <header class="h-14 bg-white border-b border-slate-200 flex items-center justify-between px-8 flex-shrink-0">
+      <div class="text-xs text-slate-400">Workspace / <span id="breadcrumb" class="text-slate-800 font-medium">Overview</span></div>
+      <div class="flex items-center space-x-4">
+        <div class="relative">
+          <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-xs text-slate-400"></i>
+          <input type="text" placeholder="Search holdings ⌘K" class="bg-white border border-slate-200 pl-8 pr-4 py-1 rounded-md text-xs w-60 focus:outline-none focus:border-emerald-600">
+        </div>
+        <div class="w-7 h-7 rounded-full bg-emerald-700 text-xs flex items-center justify-center font-bold text-white shadow-xs">MG</div>
+      </div>
+    </header>
+
+    <!-- Scrollable Workspace Body -->
+    <div class="flex-1 overflow-y-auto p-8">
+      <!-- Hidden File Input for Real Import -->
+      <input type="file" id="fileUpload" accept=".csv, .json" style="display:none;" onchange="handleFileUpload(event)">
+
+      <!-- VIEW 1: OVERVIEW -->
+      <section id="view-overview" class="space-y-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <div class="flex items-center space-x-2 text-xs font-semibold text-emerald-700 mb-1">
+              <span class="w-2 h-2 rounded-full bg-emerald-600"></span>
+              <span>LIVE DEMO PORTFOLIO</span>
+            </div>
+            <h1 class="text-2xl font-bold text-slate-900">Your portfolio, in focus.</h1>
+            <p class="text-xs text-slate-500">A clear view of what you own, what changed, and quantitative risk metrics.</p>
+          </div>
+          
+          <button onclick="document.getElementById('fileUpload').click()" class="bg-[#065f46] hover:bg-emerald-900 text-white text-xs font-semibold px-4 py-2 rounded-lg flex items-center space-x-2 shadow-sm transition">
+            <i class="fa-solid fa-file-import"></i> <span>Import portfolio</span>
+          </button>
+        </div>
+
+        <!-- 4 KPI Cards -->
+        <div class="grid grid-cols-4 gap-4">
+          <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-xs">
+            <div class="text-[11px] font-semibold text-slate-400">CURRENT VALUE</div>
+            <div id="kpi-current" class="text-2xl font-bold text-slate-900 mt-1">₹1,10,110</div>
+            <div id="kpi-pnl-pct" class="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded inline-block mt-2">↗ +3.53% since purchase</div>
+          </div>
+          <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-xs">
+            <div class="text-[11px] font-semibold text-slate-400">INVESTED AMOUNT</div>
+            <div id="kpi-invested" class="text-2xl font-bold text-slate-900 mt-1">₹1,06,360</div>
+            <div id="kpi-holdings-cnt" class="text-xs text-slate-400 mt-2">Across 4 core holdings</div>
+          </div>
+          <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-xs">
+            <div class="text-[11px] font-semibold text-slate-400">TOTAL RETURNS</div>
+            <div id="kpi-returns" class="text-2xl font-bold text-emerald-700 mt-1">+₹3,750</div>
+            <div id="kpi-ret-sub" class="text-xs text-emerald-700 mt-2">↗ +3.53% absolute return</div>
+          </div>
+          <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-xs">
+            <div class="text-[11px] font-semibold text-slate-400">TODAY'S CHANGE</div>
+            <div class="text-2xl font-bold text-emerald-700 mt-1">+₹330</div>
+            <div class="text-xs text-emerald-700 mt-2">↗ +0.30% vs previous close</div>
+          </div>
+        </div>
+
+        <!-- Charts Grid -->
+        <div class="grid grid-cols-3 gap-6">
+          <div class="col-span-2 bg-white p-5 rounded-xl border border-slate-200">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="font-semibold text-sm text-slate-900">Portfolio performance</h3>
+              <div class="space-x-1 text-[11px]">
+                <button class="px-2 py-0.5 border rounded text-slate-400">1M</button>
+                <button class="px-2 py-0.5 bg-emerald-50 text-emerald-800 font-bold rounded">3M</button>
+              </div>
+            </div>
+            <div class="h-48">
+              <canvas id="lineChart"></canvas>
+            </div>
+          </div>
+
+          <div class="bg-white p-5 rounded-xl border border-slate-200">
+            <h3 class="font-semibold text-sm text-slate-900 mb-1">Where it's invested</h3>
+            <p class="text-[11px] text-slate-400 mb-4">Allocation by sector</p>
+            <div class="h-36 flex justify-center mb-3">
+              <canvas id="donutChart"></canvas>
+            </div>
+            <div id="sectorList" class="space-y-1.5 text-xs"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- VIEW 2: PORTFOLIO -->
+      <section id="view-portfolio" class="hidden space-y-6">
+        <div class="flex items-center justify-between">
+          <h2 class="text-xl font-bold">Holdings & Positions Telemetry</h2>
+          <span class="text-xs bg-emerald-50 text-emerald-800 font-semibold px-2.5 py-1 rounded">Live DB Synchronized</span>
+        </div>
+        <div class="bg-white p-5 rounded-xl border border-slate-200">
+          <table class="w-full text-xs text-left">
+            <thead class="text-slate-400 border-b pb-2">
+              <tr><th class="pb-2">Security</th><th class="pb-2">Quantity</th><th class="pb-2">Avg Buy</th><th class="pb-2">Current Price</th><th class="pb-2">Beta (β)</th><th class="pb-2">Vol (σ)</th><th class="pb-2">Sector</th></tr>
+            </thead>
+            <tbody id="holdingsTableBody" class="divide-y divide-slate-100 font-medium"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- VIEW 3: RISK -->
+      <section id="view-risk" class="hidden space-y-6">
+        <h2 class="text-xl font-bold">Deterministic Quantitative Risk Suite</h2>
+        <div class="grid grid-cols-3 gap-6">
+          <div class="bg-white p-5 rounded-xl border border-slate-200">
+            <span class="text-xs text-slate-400 font-semibold">PORTFOLIO VOLATILITY (σ)</span>
+            <div class="text-3xl font-bold text-emerald-800 mt-2">17.20%</div>
+            <p class="text-xs text-slate-500 mt-2">Annualized Empirical Std Deviation calculated from asset returns.</p>
+          </div>
+          <div class="bg-white p-5 rounded-xl border border-slate-200">
+            <span class="text-xs text-slate-400 font-semibold">PORTFOLIO BETA (β)</span>
+            <div class="text-3xl font-bold text-emerald-800 mt-2">1.02</div>
+            <p class="text-xs text-slate-500 mt-2">Covariance vs NIFTY 50 Benchmark.</p>
+          </div>
+          <div class="bg-white p-5 rounded-xl border border-slate-200">
+            <span class="text-xs text-slate-400 font-semibold">CONCENTRATION INDEX (HHI)</span>
+            <div id="risk-hhi" class="text-3xl font-bold text-emerald-800 mt-2">0.285</div>
+            <p class="text-xs text-slate-500 mt-2">Herfindahl Score. Safe regulatory threshold is &lt; 0.35.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- VIEW 4: MARKETS -->
+      <section id="view-markets" class="hidden space-y-6">
+        <h2 class="text-xl font-bold">Live Market Indices</h2>
+        <div class="grid grid-cols-3 gap-4">
+          <div class="bg-white p-4 rounded-xl border border-slate-200">
+            <div class="text-xs text-slate-400">NIFTY 50</div>
+            <div class="text-xl font-bold mt-1">24,850.30</div>
+            <div class="text-xs text-emerald-600 font-semibold mt-1">▲ +0.62%</div>
+          </div>
+          <div class="bg-white p-4 rounded-xl border border-slate-200">
+            <div class="text-xs text-slate-400">SENSEX</div>
+            <div class="text-xl font-bold mt-1">81,420.15</div>
+            <div class="text-xs text-emerald-600 font-semibold mt-1">▲ +0.55%</div>
+          </div>
+          <div class="bg-white p-4 rounded-xl border border-slate-200">
+            <div class="text-xs text-slate-400">INDIA VIX</div>
+            <div class="text-xl font-bold mt-1">12.85</div>
+            <div class="text-xs text-red-600 font-semibold mt-1">▼ -2.10%</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- VIEW 5: NEWS -->
+      <section id="view-news" class="hidden space-y-4">
+        <h2 class="text-xl font-bold">Curated Market Telemetry</h2>
+        <div class="bg-white p-4 rounded-xl border border-slate-200 space-y-3 text-xs">
+          <div class="border-b pb-2"><div class="font-bold text-slate-900">RBI Maintains Policy Repo Rate Stance</div><div class="text-slate-400">Liquidity measures remain neutral; industrial credit growth steady.</div></div>
+          <div class="border-b pb-2"><div class="font-bold text-slate-900">IT Sector Margin Expansion Continues</div><div class="text-slate-400">Cloud modernization orders drive steady enterprise guidance.</div></div>
+        </div>
+      </section>
+
+      <!-- VIEW 6: WATCHLIST -->
+      <section id="view-watchlist" class="hidden space-y-4">
+        <h2 class="text-xl font-bold">Active Watchlist</h2>
+        <div class="bg-white p-5 rounded-xl border border-slate-200 text-xs">
+          <div class="flex justify-between py-2 border-b"><span>INFY.NS</span><span class="font-bold">₹1,890.00</span></div>
+          <div class="flex justify-between py-2 border-b"><span>ICICIBANK.NS</span><span class="font-bold">₹1,240.50</span></div>
+          <div class="flex justify-between py-2"><span>LT.NS</span><span class="font-bold">₹3,560.00</span></div>
+        </div>
+      </section>
+
+      <!-- VIEW 7: CALCULATORS -->
+      <section id="view-calculators" class="hidden space-y-4">
+        <h2 class="text-xl font-bold">Financial Mathematics Tools</h2>
+        <div class="bg-white p-5 rounded-xl border border-slate-200 text-xs space-y-3 max-w-md">
+          <label class="block font-semibold">SIP Return Estimator</label>
+          <input type="number" id="sipAmt" value="10000" class="w-full border p-2 rounded" placeholder="Monthly Investment (₹)">
+          <button onclick="document.getElementById('sipRes').innerText = '10-Year Est. Value: ₹23,23,391 (at 12% CAGR)'" class="bg-[#065f46] text-white px-3 py-1.5 rounded">Compute</button>
+          <div id="sipRes" class="text-emerald-800 font-bold mt-2"></div>
+        </div>
+      </section>
+
+      <!-- VIEW 8: AI ANALYST -->
+      <section id="view-analyst" class="hidden space-y-4">
+        <h2 class="text-xl font-bold">Interactive Controlled AI Analyst (SEBI Compliant)</h2>
+        <div class="bg-white p-5 rounded-xl border border-slate-200 flex flex-col h-96">
+          <div id="chatHistory" class="flex-1 overflow-y-auto space-y-3 text-xs mb-4">
+            <div class="bg-emerald-50 p-3 rounded-lg border border-emerald-100 text-emerald-900">
+              Hello! I am your portfolio intelligence engine. Ask me about your holdings, returns, volatility, or rebalancing.
+            </div>
+          </div>
+          <div class="flex space-x-2">
+            <input type="text" id="userQuery" placeholder="Ask about HDFC Bank, portfolio risk, or rebalancing..." class="flex-1 border p-2 text-xs rounded-lg focus:outline-none focus:border-emerald-600">
+            <button onclick="submitQuery()" class="bg-[#065f46] text-white text-xs px-4 rounded-lg font-semibold">Ask</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- VIEW 9: ACTIVITY & AUDIT -->
+      <section id="view-activity" class="hidden space-y-4">
+        <div class="flex items-center justify-between">
+          <h2 class="text-xl font-bold">Immutable Audit Logs (SQLite)</h2>
+          <button onclick="refreshAuditLogs()" class="text-xs bg-slate-100 hover:bg-slate-200 px-3 py-1.5 rounded">Refresh Logs</button>
+        </div>
+        <div id="auditLogList" class="bg-white p-5 rounded-xl border border-slate-200 text-xs font-mono space-y-2"></div>
+      </section>
+
+    </div>
+  </main>
+
+  <script>
+    let donutChartInstance = null;
+    let lineChartInstance = null;
+
+    const views = ['overview', 'portfolio', 'risk', 'markets', 'news', 'watchlist', 'calculators', 'analyst', 'activity'];
+    function switchView(target) {
+      views.forEach(v => {
+        document.getElementById('view-' + v).classList.add('hidden');
+        document.getElementById('btn-' + v).classList.remove('active');
+      });
+      document.getElementById('view-' + target).classList.remove('hidden');
+      document.getElementById('btn-' + target).classList.add('active');
+      document.getElementById('breadcrumb').innerText = target.charAt(0).toUpperCase() + target.slice(1);
+      if (target === 'activity') refreshAuditLogs();
+    }
+
+    function updateUI(data) {
+      document.getElementById('kpi-current').innerText = '₹' + data.current.toLocaleString('en-IN', {minimumFractionDigits: 2});
+      document.getElementById('kpi-invested').innerText = '₹' + data.invested.toLocaleString('en-IN', {minimumFractionDigits: 2});
+      document.getElementById('kpi-returns').innerText = (data.returns >= 0 ? '+₹' : '-₹') + Math.abs(data.returns).toLocaleString('en-IN', {minimumFractionDigits: 2});
+      document.getElementById('kpi-pnl-pct').innerText = '↗ +' + data.return_pct + '% since purchase';
+      document.getElementById('kpi-holdings-cnt').innerText = 'Across ' + data.holdings_count + ' holdings';
+      if (document.getElementById('risk-hhi')) {
+        document.getElementById('risk-hhi').innerText = data.hhi;
+      }
+
+      const sectorDiv = document.getElementById('sectorList');
+      sectorDiv.innerHTML = '';
+      const sectorLabels = Object.keys(data.sectors);
+      const sectorValues = Object.values(data.sectors);
+      sectorLabels.forEach((sec, idx) => {
+        sectorDiv.innerHTML += `<div class="flex justify-between items-center text-slate-600"><span>${sec}</span><span class="font-semibold">${sectorValues[idx]}%</span></div>`;
+      });
+
+      const tbody = document.getElementById('holdingsTableBody');
+      tbody.innerHTML = '';
+      data.holdings.forEach(h => {
+        tbody.innerHTML += `<tr><td class="py-3 font-bold text-slate-900">${h.symbol}</td><td>${h.quantity}</td><td>₹${h.avg_price}</td><td>₹${h.current_price}</td><td>${h.beta || 1.0}</td><td>${h.vol || 15.0}%</td><td>${h.sector || 'Equity'}</td></tr>`;
+      });
+
+      if (donutChartInstance) {
+        donutChartInstance.data.labels = sectorLabels;
+        donutChartInstance.data.datasets[0].data = sectorValues;
+        donutChartInstance.update();
+      }
+    }
+
+    async function handleFileUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const res = await fetch("/api/import-portfolio", { method: "POST", body: formData });
+      const resJson = await res.json();
+      if (resJson.status === "success") {
+        updateUI(resJson.data);
+        alert("Portfolio imported successfully!");
+      } else {
+        alert("Import Error: " + resJson.message);
+      }
+    }
+
+    async function refreshAuditLogs() {
+      const res = await fetch('/api/audit-logs');
+      const data = await res.json();
+      const container = document.getElementById('auditLogList');
+      container.innerHTML = '';
+      data.logs.forEach(log => {
+        container.innerHTML += `<div class="p-2 bg-slate-50 border rounded text-[11px]">${log.timestamp} | <b>${log.event_type}</b> | ${JSON.stringify(log.details)}</div>`;
+      });
+    }
+
+    window.onload = async function() {
+      lineChartInstance = new Chart(document.getElementById('lineChart'), {
+        type: 'line',
+        data: {
+          labels: ['Aug', 'Sep', 'Oct'],
+          datasets: [{
+            label: 'Portfolio Value (₹)',
+            data: [106360, 108200, 110110],
+            borderColor: '#065f46',
+            backgroundColor: 'rgba(6, 95, 70, 0.08)',
+            fill: true,
+            tension: 0.3
+          }]
+        },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+      });
+
+      donutChartInstance = new Chart(document.getElementById('donutChart'), {
+        type: 'doughnut',
+        data: {
+          labels: ['Banking', 'IT', 'Energy', 'FMCG'],
+          datasets: [{
+            data: [36.3, 34.3, 21.5, 7.9],
+            backgroundColor: ['#065f46', '#059669', '#34d399', '#f59e0b'],
+            borderWidth: 0
+          }]
+        },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, cutout: '72%' }
+      });
+
+      const res = await fetch('/api/metrics');
+      const data = await res.json();
+      updateUI(data);
+    };
+
+    async function submitQuery() {
+      const q = document.getElementById('userQuery').value;
+      if (!q) return;
+      const history = document.getElementById('chatHistory');
+      history.innerHTML += `<div class="bg-slate-100 p-2.5 rounded-lg text-slate-800 self-end text-right"><b>You:</b> ${q}</div>`;
+      document.getElementById('userQuery').value = '';
+
+      const res = await fetch('/api/ask', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query: q })
+      });
+      const data = await res.json();
+      history.innerHTML += `<div class="bg-emerald-50 p-2.5 rounded-lg border border-emerald-100 text-emerald-900"><b>AI:</b> ${data.reply}</div>`;
+      history.scrollTop = history.scrollHeight;
+    }
+  </script>
+</body>
+</html>
