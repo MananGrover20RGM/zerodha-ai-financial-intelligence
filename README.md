@@ -3,8 +3,10 @@
 An enterprise-grade portfolio intelligence and quantitative risk management platform built with FastAPI, SQLite audit trails, and SEBI-grounded guardrails.
 
 ## 📽️ Project Links & Video Walkthrough
-* **Live Web App Demo:** https://human-andreas-remote-change.trycloudflare.com
-* **Video Demonstration:** [Add your Google Drive link here - Anyone with the link can view]
+## 🎥 Project Links & Walkthrough
+
+* **Live Web App Demo:** https://zerodha-ai-financial-intelligence-10lx.onrender.com
+* **Project Video Demonstration:** [Watch 18-Min Walkthrough on Google Drive](https://drive.google.com/file/d/1hVF62m5JUrZrCrl071m65NVyLwGK6weG/view?usp=sharing)
 
 ## 🌟 Key Capabilities
 1. **Deterministic Quantitative Risk Suite:** Annualized Volatility (σ), Beta (β vs NIFTY 50), and HHI Concentration Index.
