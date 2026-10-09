@@ -3,7 +3,7 @@
 An enterprise-grade portfolio intelligence and quantitative risk management platform built with FastAPI, SQLite audit trails, and SEBI-grounded guardrails.
 
 ## 📽️ Project Links & Video Walkthrough
-* **Live Web App Demo:** https://remix-permit-lindsay-district.trycloudflare.com
+* **Live Web App Demo:** https://human-andreas-remote-change.trycloudflare.com
 * **Video Demonstration:** [Add your Google Drive link here - Anyone with the link can view]
 
 ## 🌟 Key Capabilities
